@@ -10,23 +10,32 @@
 
 <div class="app-component test-panel-container">
   <div class="test-panel plugin-test-panel">
-    <div class="bottom-10">
-      <span class="bigger-bold-text"
+    <span class="bigger-bold-text"
       i18n="test for plugin requests|A set of widgets to test sending request to other apps on the desktop@@app-request-test">App Request Test</span>
-      <!-- Tests the sending of requests to other plugins. Defaults to send a message
+
+    <div class="bottom-10">
+           <!-- Tests the sending of requests to other plugins. Defaults to send a message
            to itself (and responding) to show more parts of the API-->
-      <zlux-button class="iframe-button shadowed" type="button" (click)="sendAppRequest()"
+      <zlux-button class="iframe-button shadowed" (click)="sendAppRequest()"
       i18n="send request to application|Send a request to another application on the desktop@@send-app-request">Send App Request</zlux-button>
-      <zlux-button class="iframe-button shadowed" type="button" (click)="getDefaultsFromServer()"
+      <zlux-button class="iframe-button shadowed" (click)="getDefaultsFromServer()"
       i18n="get from server@@get-from-server">Get from Server</zlux-button>
-      <zlux-button class="iframe-button shadowed" type="button" (click)="saveToServer()"
+      <zlux-button class="iframe-button shadowed" (click)="saveToServer()"
       i18n="save to server@@save-to-server">Save to Server</zlux-button>
     </div>
     <span class="bold-text" i18n="application identifier">Application Identifier: </span>
     <div>
       <div class="div-input">
-        <input class="iframe-input input-height input-corner input-text shadowed" type="text" [(ngModel)]="targetAppId"/>
+        <select [(ngModel)]="targetAppId" class="iframe-input input-height input-corner shadowed" id="identifierInput" [attr.disabled]="this.targetMode === 'PluginSpecifyTargetID' || this.actionType === 'Maximize' || this.actionType === 'Minimize' ? '' : null">
+           <option *ngFor="let app of appIdOptions" [value]="app.value">
+              {{app.description}}
+          </option>
+        </select>
       </div>
+       <label class="targetLabel bold-text">Target ID:</label>
+       <div class="div-input">
+       <input type="number" class="iframe-input input-height input-corner shadowed" [(ngModel)]="targetId" value="1" id="targetInput" [attr.disabled]="this.targetMode !== 'PluginSpecifyTargetID' || this.actionType === 'Launch' || this.actionType === 'Message' ? '' : null">
+       </div>
       <div>
         <!-- Action types are used to determine what sort of Action is being taken on whatever App instance is the target. Launch simply creates a new instance with the context you provide, but Message can be used to communicate with an already open Instance to drive some action -->
         
@@ -36,6 +45,14 @@
 
         <input type="radio" [(ngModel)]="actionType" name="actionType" value="Message">
         <label for="actionMessage" i18n="send a message to another app@@message">Message</label>
+
+
+        <input type="radio" [(ngModel)]="actionType" name="actionType" value="Maximize">
+        <label for="actionMessage" i18n="mazimize another app@@maximize">Maximize</label>
+       
+        <input type="radio" [(ngModel)]="actionType" name="actionType" value="Minimize">
+        <label for="actionMessage" i18n="minimize another app@@minimize">Minimize</label>
+
       </div>
       <!-- App target modes are used to determine which instance of an App should be communicated with. You can create a new instance to send the Action to, or you could reuse an existing instance that is open. -->
       <div>
@@ -46,6 +63,9 @@
 
         <input type="radio" [(ngModel)]="targetMode" name="targetMode" value="PluginFindAnyOrCreate">
         <label for="targetReuse" i18n="reuse any open app@@reuse-any-open">Reuse Any Open</label>
+
+        <input type="radio" [(ngModel)]="targetMode" name="targetMode" value="PluginSpecifyTargetID">
+        <label for="targetReuse" i18n="reuse any open app@@reuse-any-open">Specify Target ID</label>
       </div>      
       <span class="bold-text hide-it" i18n="window title for target app@@target-app-window-title">
         Target App Window Title (this will become the title for the target window)</span>
@@ -70,8 +90,8 @@
       <span class="bigger-bold-text" i18n="test of dataservice requests@@dataservice-request-test">Dataservice Request Test</span>
     </div>
     <div>
-      <input placeholder="Message" 
-             i18n-placeholder="message|indicates that the user will enter a message@@appComponentMessage" [(ngModel)]="helloText"
+      <input placeholder="Message" class=" input-height input-corner input-text shadowed"
+       i18n-placeholder="message|indicates that the user will enter a message@@appComponentMessage" [(ngModel)]="helloText"
       (keyup.enter)="sayHello()"/>
       <zlux-button (click)="sayHello()" [disabled]="helloText === ''"
               i18n="run|Run the application@@appComponentRun">Run</zlux-button>
